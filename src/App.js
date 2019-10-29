@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import { getBusinessMatch } from "./utils/getBusinessMatch";
 
 function App() {
   const [input, setInput] = React.useState("");
@@ -8,9 +9,15 @@ function App() {
   // on submit capture input data
   const handleSubmit = e => {
     e.preventDefault();
-    const searchBusinessName = input;
-    console.log(searchBusinessName);
-    setOutput(searchBusinessName);
+    const GUID = process.env.REACT_APP_GUID;
+    const url = `https://abr.business.gov.au/json/MatchingNames.aspx?name=${input}&maxResults=10&callback=callback&guid=${GUID}`;
+    getBusinessMatch(url).then(data => {
+      const searchBusinessName = data;
+      console.log("returneddata", data);
+      const dataRecord = data.records;
+    });
+
+    setOutput(input);
   };
 
   return (

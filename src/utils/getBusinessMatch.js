@@ -6,17 +6,12 @@ const checkResponse = response => {
   return response.json();
 };
 
-const getBusinessMatch = inputBusinessName => {
-  const GUID = process.env.REACT_APP_GUID;
-  console.log(GUID);
-  return fetch(
-    `https://abr.business.gov.au/json/MatchingNames.aspx?name=${inputBusinessName}&maxResults=10&callback=callback&guid=${GUID}`
-  )
-    .then(response => response.json())
+const getBusinessMatch = url => {
+  return fetch(url)
     .then(checkResponse)
     .catch(err => {
       throw new Error(`fetch fetchData failed ${err}`);
     });
 };
 
-module.exports = { getBusinessMatch };
+export { getBusinessMatch };
