@@ -50,7 +50,7 @@ it("return list of matching companies from api call - first 2 listings are corre
   ];
 
   const inputBusinessName = "department of industry";
-  return getBusinessNames(inputBusinessName).then(actual => {
+  return getBusinessMatch(inputBusinessName).then(actual => {
     expect(actual.Names).toEqual(expected);
   });
 });
