@@ -1,17 +1,21 @@
-const checkResponse = response => {
-  if (response.status !== 200) {
-    console.log(`Error with the request! ${response.status}`);
-    return;
-  }
-  return response.json();
-};
+// const checkResponse = response => {
+//   if (response.status !== 200) {
+//     console.log(`Error with the request! ${response.status}`);
+//     return;
+//   }
+//   return response.json();
+// };
 
-const getBusinessMatch = url => {
-  return fetch(url)
-    .then(checkResponse)
-    .catch(err => {
-      throw new Error(`fetch fetchData failed ${err}`);
-    });
-};
+// const getBusinessMatch = url => {
+//   return fetch(url)
+//     .then(checkResponse)
+//     .catch(err => {
+//       throw new Error(`fetch fetchData failed ${err}`);
+//     });
+// };
 
-export { getBusinessMatch };
+// export { getBusinessMatch };
+
+// function callback(nameData) {
+//   console.log("nameData", nameData);
+// }
