@@ -40,9 +40,13 @@ function App() {
 
   return (
     <section className="business-name-form">
-      <h1>Welcome to my business lookup app</h1>
+      <h1 className="business-name-form__header">
+        Welcome to my business lookup app
+      </h1>
       <form id="business-name-form" onSubmit={handleSubmit}>
-        <label htmlFor="businessname-input">Please enter a business name</label>
+        <label htmlFor="businessname-input" className="businessname-label">
+          Please enter a business name
+        </label>
         <input
           className="business-name-form__input"
           id="businessname-input"
@@ -56,11 +60,9 @@ function App() {
       </form>
 
       {output && (
-        <output data-testid="output">
-          <ul class="list-group">
-            {nameList.length ? nameList : <li>No results </li>}
-          </ul>
-        </output>
+        <ul className="name-list">
+          {nameList.length ? nameList : <li>No results </li>}
+        </ul>
       )}
     </section>
   );
