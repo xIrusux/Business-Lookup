@@ -1,11 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { render, cleanup, fireEvent } from "@testing-library/react";
-import { App, getBusinessNames } from "./App";
-
-// import { getBusinessMatch } from "./utils/getBusinessMatch.js";
+import {
+  render,
+  cleanup,
+  fireEvent,
+  waitForElement
+} from "@testing-library/react";
+import App from "./App";
 
 afterEach(cleanup);
+
+const mockResponse = `<ol class=\"name-list\"><p>Please search for a business name to see results</p></ol>`;
+global.fetch = jest
+  .fn()
+  .mockImplementation(() =>
+    Promise.resolve({ text: () => Promise.resolve(mockResponse) })
+  );
 
 it("renders without crashing", () => {
   const div = document.createElement("div");
@@ -13,58 +23,15 @@ it("renders without crashing", () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
-// it("app component outputs input upon form submission", () => {
-//   const { getByText, getByLabelText } = render(<App />);
+it("The List shows a placeholder before businessname list results are received", () => {
+  const { getByLabelText, getByTestId } = render(<App />);
 
-//   const input = getByLabelText("Please enter a business name");
-//   fireEvent.change(input, {
-//     target: { value: `department of industry` }
-//   });
-
-//   const button = getByText("Search");
-//   fireEvent
-//     .click(button)
-//     .then(
-//       expect(getByText("74599608295 DEPARTMENT OF INDUSTRY 100")).toBeTruthy()
-//     );
-// });
-
-it("return list of matching companies from api call - first 2 listings are correct", () => {
-  const expected = [
-    {
-      Abn: "72189919072",
-      AbnStatus: "0000000001",
-      IsCurrent: true,
-      Name: "DEPARTMENT OF INDUSTRY",
-      NameType: "Entity Name",
-      Postcode: "2800",
-      Score: 100,
-      State: "NSW"
-    },
-    {
-      Abn: "74599608295",
-      AbnStatus: "0000000001",
-      IsCurrent: true,
-      Name: "DEPARTMENT OF INDUSTRY",
-      NameType: "Entity Name",
-      Postcode: "2601",
-      Score: 100,
-      State: "ACT"
-    }
-  ];
-
-  const GUID = process.env.REACT_APP_GUID;
-  const url = `https://abr.business.gov.au/json/MatchingNames.aspx?name=department+of+industry&maxResults=10&guid=${GUID}`;
-  getBusinessNames(url).then(function(json) {
-    let nameArr = [];
-    for (var i = 0; i < json.Names.length; i++) {
-      nameArr.push(
-        json.Names[i].Abn + " " + json.Names[i].Name + " " + json.Names[i].Score
-      );
-      expect(nameArr).toEqual([]);
-    }
+  const input = getByLabelText("Please enter a business name");
+  fireEvent.change(input, {
+    target: { value: "department of industry" }
   });
-  // return getBusinessNames(inputBusinessName).then(actual => {
-  //   expect(actual.Names).toEqual(expected);
-  // });
+
+  return waitForElement(() => getByTestId("output")).then(output =>
+    expect(output.innerHTML).toEqual(mockResponse)
+  );
 });
