@@ -1,43 +1,38 @@
 import React from "react";
 import "./App.css";
-import fetchJsonp from "fetch-jsonp";
+import { getBusinessNames } from "./utils/getBusinessNames.js";
 
 function App() {
   const [input, setInput] = React.useState("");
   const [output, setOutput] = React.useState([]);
 
-  // on submit capture input data and fetch data
+  // on submit capture input data and make JSONP call, then set output to the received NameArray
   const handleSubmit = e => {
     e.preventDefault();
     const GUID = process.env.REACT_APP_GUID;
     const url = `https://abr.business.gov.au/json/MatchingNames.aspx?name=${input}&maxResults=10&guid=${GUID}`;
-
-    fetchJsonp(url, {
-      jsonpCallbackFunction: "callback"
-    })
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(json) {
-        let nameArr = [];
-        for (var i = 0; i < json.Names.length; i++) {
-          nameArr.push(
-            json.Names[i].Abn +
-              " " +
-              json.Names[i].Name +
-              " " +
-              json.Names[i].Score
-          );
-        }
-        setOutput(nameArr);
-      })
-      .catch(function(ex) {
-        console.log("parsing failed", ex);
-      });
+    getBusinessNames(url).then(function(json) {
+      let nameArr = [];
+      for (var i = 0; i < json.Names.length; i++) {
+        nameArr.push([
+          "Business ABN:  " + json.Names[i].Abn,
+          "Business Name:  " + json.Names[i].Name,
+          "Business Score:  " + json.Names[i].Score
+        ]);
+      }
+      setOutput(nameArr);
+    });
   };
-
-  const nameList = output.map((name, i) => <li key={i}>{name}</li>);
-
+  console.log(output);
+  const nameList = output.map((name, i) => (
+    <li className="name-list__item" key={i}>
+      {name[0]}
+      <br></br>
+      {name[1]}
+      <br></br>
+      {name[2]}
+    </li>
+  ));
   return (
     <section className="business-name-form">
       <h1 className="business-name-form__header">
@@ -60,9 +55,15 @@ function App() {
       </form>
 
       {output && (
-        <ul className="name-list">
-          {nameList.length ? nameList : <li>No results </li>}
-        </ul>
+        <output data-testid="output">
+          <ol className="name-list">
+            {nameList.length ? (
+              nameList
+            ) : (
+              <p>Please search for a business name to see results</p>
+            )}
+          </ol>
+        </output>
       )}
     </section>
   );

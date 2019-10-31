@@ -51,4 +51,12 @@
 
 .name-list {
   font-size: 1.4em;
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  border: 1px black;
+}
+
+.name-list__item {
+  margin: 1em;
 }
