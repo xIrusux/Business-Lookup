@@ -23,7 +23,7 @@ function App() {
       setOutput(nameArr);
     });
   };
-  console.log(output);
+
   const nameList = output.map((name, i) => (
     <li className="name-list__item" key={i}>
       {name[0]}
