@@ -4,12 +4,11 @@ import fetchJsonp from "fetch-jsonp";
 
 function App() {
   const [input, setInput] = React.useState("");
-  const [output, setOutput] = React.useState("");
+  const [output, setOutput] = React.useState([]);
 
-  // on submit capture input data
+  // on submit capture input data and fetch data
   const handleSubmit = e => {
     e.preventDefault();
-    const jasonpScript = document.createElement("script");
     const GUID = process.env.REACT_APP_GUID;
     const url = `https://abr.business.gov.au/json/MatchingNames.aspx?name=${input}&maxResults=10&guid=${GUID}`;
 
@@ -20,9 +19,9 @@ function App() {
         return response.json();
       })
       .then(function(json) {
-        console.log("parsed json", json);
+        let nameArr = [];
         for (var i = 0; i < json.Names.length; i++) {
-          console.log(
+          nameArr.push(
             json.Names[i].Abn +
               " " +
               json.Names[i].Name +
@@ -30,17 +29,24 @@ function App() {
               json.Names[i].Score
           );
         }
+        setOutput(nameArr);
       })
       .catch(function(ex) {
         console.log("parsing failed", ex);
       });
   };
 
+  const nameList = output.map((name, i) => <li key={i}>{name}</li>);
+
   return (
     <section className="business-name-form">
-      <h1>Welcome to my business lookup app</h1>
+      <h1 className="business-name-form__header">
+        Welcome to my business lookup app
+      </h1>
       <form id="business-name-form" onSubmit={handleSubmit}>
-        <label htmlFor="businessname-input">Please enter a business name</label>
+        <label htmlFor="businessname-input" className="businessname-label">
+          Please enter a business name
+        </label>
         <input
           className="business-name-form__input"
           id="businessname-input"
@@ -52,7 +58,12 @@ function App() {
           Search
         </button>
       </form>
-      {output && <output data-testid="output">{output}</output>}
+
+      {output && (
+        <ul className="name-list">
+          {nameList.length ? nameList : <li>No results </li>}
+        </ul>
+      )}
     </section>
   );
 }
