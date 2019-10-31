@@ -4,12 +4,11 @@ import fetchJsonp from "fetch-jsonp";
 
 function App() {
   const [input, setInput] = React.useState("");
-  const [output, setOutput] = React.useState("");
+  const [output, setOutput] = React.useState([]);
 
-  // on submit capture input data
+  // on submit capture input data and fetch data
   const handleSubmit = e => {
     e.preventDefault();
-    const jasonpScript = document.createElement("script");
     const GUID = process.env.REACT_APP_GUID;
     const url = `https://abr.business.gov.au/json/MatchingNames.aspx?name=${input}&maxResults=10&guid=${GUID}`;
 
@@ -20,9 +19,9 @@ function App() {
         return response.json();
       })
       .then(function(json) {
-        console.log("parsed json", json);
+        let nameArr = [];
         for (var i = 0; i < json.Names.length; i++) {
-          console.log(
+          nameArr.push(
             json.Names[i].Abn +
               " " +
               json.Names[i].Name +
@@ -30,11 +29,14 @@ function App() {
               json.Names[i].Score
           );
         }
+        setOutput(nameArr);
       })
       .catch(function(ex) {
         console.log("parsing failed", ex);
       });
   };
+
+  const nameList = output.map((name, i) => <li key={i}>{name}</li>);
 
   return (
     <section className="business-name-form">
@@ -52,7 +54,14 @@ function App() {
           Search
         </button>
       </form>
-      {output && <output data-testid="output">{output}</output>}
+
+      {output && (
+        <output data-testid="output">
+          <ul class="list-group">
+            {nameList.length ? nameList : <li>No results </li>}
+          </ul>
+        </output>
+      )}
     </section>
   );
 }
