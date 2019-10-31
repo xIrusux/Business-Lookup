@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import fetchJsonp from "fetch-jsonp";
 
 function App() {
   const [input, setInput] = React.useState("");
@@ -8,9 +9,31 @@ function App() {
   // on submit capture input data
   const handleSubmit = e => {
     e.preventDefault();
-    const searchBusinessName = input;
-    console.log(searchBusinessName);
-    setOutput(searchBusinessName);
+    const jasonpScript = document.createElement("script");
+    const GUID = process.env.REACT_APP_GUID;
+    const url = `https://abr.business.gov.au/json/MatchingNames.aspx?name=${input}&maxResults=10&guid=${GUID}`;
+
+    fetchJsonp(url, {
+      jsonpCallbackFunction: "callback"
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(json) {
+        console.log("parsed json", json);
+        for (var i = 0; i < json.Names.length; i++) {
+          console.log(
+            json.Names[i].Abn +
+              " " +
+              json.Names[i].Name +
+              " " +
+              json.Names[i].Score
+          );
+        }
+      })
+      .catch(function(ex) {
+        console.log("parsing failed", ex);
+      });
   };
 
   return (
