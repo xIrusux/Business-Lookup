@@ -6,9 +6,8 @@ A React application that meets the following user requirements:
 
 ## Installation
 
-1. use git clone https://github.com/xIrusux/Business-Lookup.git to clone the project)
+1. use git clone https://github.com/xIrusux/Business-Lookup.git to clone the project
 2. use npm i to install all dependencies
 3. if the project is cloned from Github, please create a .env file in the root directory locally with your GUID in the following format: REACT_APP_GUID = xxxxxx
 4. use npm start to launch the project on localhost:3000
-5. you can use npm build to create a local version of how the project will build on the live production version
-6. you can run npm test to run tests locally.
+5. you can run npm test to run tests locally.
