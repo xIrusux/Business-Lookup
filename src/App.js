@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { useEffect } from "react";
+import fetchJsonp from "fetch-jsonp";
 
 function App() {
   const [input, setInput] = React.useState("");
@@ -11,29 +11,29 @@ function App() {
     e.preventDefault();
     const jasonpScript = document.createElement("script");
     const GUID = process.env.REACT_APP_GUID;
-    const url = `https://abr.business.gov.au/json/MatchingNames.aspx?name=${input}&maxResults=10&callback=nameCallback&guid=${GUID}`;
+    const url = `https://abr.business.gov.au/json/MatchingNames.aspx?name=${input}&maxResults=10&guid=${GUID}`;
 
-    jasonpScript.src = url;
-    jasonpScript.type = "text/javascript";
-
-    document.body.appendChild(jasonpScript);
-
-    return () => {
-      document.body.removeChild(jasonpScript);
-    };
-  };
-
-  const nameCallback = nameData => {
-    console.log(nameData);
-    for (var i = 0; i < nameData.Names.length; i++) {
-      console.log(
-        nameData.Names[i].Abn +
-          " " +
-          nameData.Names[i].Name +
-          " " +
-          nameData.Names[i].Score
-      );
-    }
+    fetchJsonp(url, {
+      jsonpCallbackFunction: "callback"
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(json) {
+        console.log("parsed json", json);
+        for (var i = 0; i < json.Names.length; i++) {
+          console.log(
+            json.Names[i].Abn +
+              " " +
+              json.Names[i].Name +
+              " " +
+              json.Names[i].Score
+          );
+        }
+      })
+      .catch(function(ex) {
+        console.log("parsing failed", ex);
+      });
   };
 
   return (
